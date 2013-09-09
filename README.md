@@ -19,6 +19,7 @@ TODO
 
 Prerequisites
 
+ * Python 2.7
  * eyeD3 v0.7 or higher (pip install eyeD3)
 
 Using
