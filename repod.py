@@ -125,7 +125,11 @@ for row in keep:
 
 	shutil.copyfile(srcFile, dstFile)
 
-	mp3 = eyed3.load(dstFile)
+	try:
+		mp3 = eyed3.load(dstFile)
+	except BaseException as error:
+		print '>>> Error processing file'
+		continue
 
 	if mp3.tag == None:
 		print '>>> skipping file because not an mp3'
