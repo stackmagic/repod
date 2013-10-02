@@ -138,8 +138,14 @@ for row in keep:
 	# stupid unicode
 	mp3.tag.album      = u'%s' % row['album' ].decode('UTF-8')
 	mp3.tag.artist     = u'%s' % row['artist'].decode('UTF-8')
-	mp3.tag.genre.name = u'%s' % row['genre' ].decode('UTF-8')
 	mp3.tag.title      = u'%s' % row['title' ].decode('UTF-8')
+
+	# handle genre, which might be missing
+	genre = u'%s' % row['genre'].decode('UTF-8')
+	if mp3.tag.genre is None:
+		mp3.tag.genre = eyed3.id3.Genre(genre)
+	else:
+		mp3.tag.genre.name = genre
 
 	# some simple numbers
 	mp3.tag.disc_num   = row['disc_number']
