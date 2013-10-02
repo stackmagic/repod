@@ -161,11 +161,9 @@ for row in keep:
 	mp3.tag.popularities.set('rating@mp3.com', rating, row['play_count'])
 
 	# it seems some frames can't be converted to v2.4
-	if 'TYER' in mp3.tag.frame_set:
-		del mp3.tag.frame_set['TYER']
-
-	if 'RGAD' in mp3.tag.frame_set:
-		del mp3.tag.frame_set['RGAD']
+	for name in ('TYER', 'RGAD', 'RVAD', 'TSO2'):
+		if name in mp3.tag.frame_set:
+			del mp3.tag.frame_set[name]
 
 	# commit
 	mp3.tag.save(version = eyed3.id3.ID3_V2_4)
