@@ -131,7 +131,7 @@ for row in keep:
 		print '>>> Error processing file'
 		continue
 
-	if mp3.tag == None:
+	if mp3 is None or mp3.tag == None:
 		print '>>> skipping file because not an mp3'
 		continue
 
