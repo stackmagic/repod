@@ -125,9 +125,13 @@ for row in keep:
 
 	shutil.copyfile(srcFile, dstFile)
 
-	mp3 = eyed3.load(dstFile)
+	try:
+		mp3 = eyed3.load(dstFile)
+	except BaseException as error:
+		print '>>> Error processing file'
+		continue
 
-	if mp3.tag == None:
+	if mp3 is None or mp3.tag == None:
 		print '>>> skipping file because not an mp3'
 		continue
 
@@ -138,8 +142,14 @@ for row in keep:
 	# stupid unicode
 	mp3.tag.album      = u'%s' % row['album' ].decode('UTF-8')
 	mp3.tag.artist     = u'%s' % row['artist'].decode('UTF-8')
-	mp3.tag.genre.name = u'%s' % row['genre' ].decode('UTF-8')
 	mp3.tag.title      = u'%s' % row['title' ].decode('UTF-8')
+
+	# handle genre, which might be missing
+	genre = u'%s' % row['genre'].decode('UTF-8')
+	if mp3.tag.genre is None:
+		mp3.tag.genre = eyed3.id3.Genre(genre)
+	else:
+		mp3.tag.genre.name = genre
 
 	# some simple numbers
 	mp3.tag.disc_num   = row['disc_number']
@@ -161,11 +171,9 @@ for row in keep:
 	mp3.tag.popularities.set('rating@mp3.com', rating, row['play_count'])
 
 	# it seems some frames can't be converted to v2.4
-	if 'TYER' in mp3.tag.frame_set:
-		del mp3.tag.frame_set['TYER']
-
-	if 'RGAD' in mp3.tag.frame_set:
-		del mp3.tag.frame_set['RGAD']
+	for name in ('TYER', 'RGAD', 'RVAD', 'TSO2'):
+		if name in mp3.tag.frame_set:
+			del mp3.tag.frame_set[name]
 
 	# commit
 	mp3.tag.save(version = eyed3.id3.ID3_V2_4)
